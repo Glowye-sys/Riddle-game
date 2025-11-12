@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riddle Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #4a0a0a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Cinzel', serif;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 700px;
+        }
+
+        .riddle {
+            color: #f4e4c1;
+            font-size: 1.8rem;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .answer-box {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-family: 'Cinzel', serif;
+            background-color: #2a0505;
+            border: 2px solid #8b1a1a;
+            color: #f4e4c1;
+            border-radius: 8px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .answer-box:focus {
+            border-color: #d4af37;
+        }
+
+        .answer-box::placeholder {
+            color: #8b6f47;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            font-size: 1.3rem;
+            color: #f4e4c1;
+            min-height: 30px;
+        }
+
+        .correct {
+            color: #90ee90;
+            text-shadow: 0 0 10px #90ee90;
+        }
+
+        .incorrect {
+            color: #ff6b6b;
+        }
+
+        .qr-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #2a0505;
+            border: 2px solid #d4af37;
+            border-radius: 12px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .qr-container.show {
+            display: block;
+        }
+
+        .qr-container img {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 250px;
+            height: auto;
+        }
+
+        .qr-title {
+            color: #d4af37;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+        }
+
+        .qr-link {
+            color: #f4e4c1;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="riddle">
+            I speak without a mouth and hear without ears.<br>
+            I have no body, but I come alive with wind.<br>
+            What am I?
+        </div>
+        <input 
+            type="text" 
+            class="answer-box" 
+            placeholder="Enter your answer..."
+            id="answerInput"
+        >
+        <div class="feedback" id="feedback"></div>
+        
+        <div class="qr-container" id="qrContainer">
+            <div class="qr-title">The Killer can't be Caught... Or can they?</div>
+            <img id="qrImage" src="" alt="QR Code">
+            <div class="qr-link">Scan to continue your journey...</div>
+        </div>
+    </div>
+
+    <script>
+        const answerInput = document.getElementById('answerInput');
+        const feedback = document.getElementById('feedback');
+        const qrContainer = document.getElementById('qrContainer');
+        const qrImage = document.getElementById('qrImage');
+        const correctAnswers = ['echo', 'an echo'];
+        
+        // CHANGE THIS URL to wherever you want the QR code to link to
+        const nextRiddleURL = 'https://www.youtube.com/watch?v=NRxLpXAqWiw';
+
+        answerInput.addEventListener('input', function() {
+            const userAnswer = this.value.trim().toLowerCase();
+            
+            if (userAnswer === '') {
+                feedback.textContent = '';
+                feedback.className = 'feedback';
+                qrContainer.classList.remove('show');
+                return;
+            }
+
+            if (correctAnswers.includes(userAnswer)) {
+                feedback.textContent = 'Correct! Well done, riddle solver!';
+                feedback.className = 'feedback correct';
+                showQRCode();
+            } else if (userAnswer.length > 2) {
+                feedback.textContent = 'Not quite...';
+                feedback.className = 'feedback incorrect';
+                qrContainer.classList.remove('show');
+            }
+        });
+
+        answerInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const userAnswer = this.value.trim().toLowerCase();
+                if (correctAnswers.includes(userAnswer)) {
+                    feedback.textContent = '✨ Correct! Well done, riddle solver! ✨';
+                    feedback.className = 'feedback correct';
+                    showQRCode();
+                }
+            }
+        });
+
+        function showQRCode() {
+            // Generate QR code using QR Server API
+            const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(nextRiddleURL)}`;
+            qrImage.src = qrURL;
+            qrContainer.classList.add('show');
+        }
+    </script>
+</body>
+</html>
